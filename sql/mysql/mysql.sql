@@ -1,3 +1,8 @@
+# CREATE CBOARD SCHEMA FIRST
+
+use cboard;
+
+DROP TABLE IF exists dashboard_board;
 CREATE TABLE dashboard_board (
   board_id bigint(20) NOT NULL AUTO_INCREMENT,
   user_id varchar(50) NOT NULL,
@@ -7,6 +12,7 @@ CREATE TABLE dashboard_board (
   PRIMARY KEY (board_id)
 );
 
+DROP TABLE IF exists dashboard_category;
 CREATE TABLE dashboard_category (
   category_id bigint(20) NOT NULL AUTO_INCREMENT,
   category_name varchar(100) NOT NULL,
@@ -14,6 +20,7 @@ CREATE TABLE dashboard_category (
   PRIMARY KEY (category_id)
 );
 
+DROP TABLE IF exists dashboard_datasource;
 CREATE TABLE dashboard_datasource (
   datasource_id bigint(20) NOT NULL AUTO_INCREMENT,
   user_id varchar(50) NOT NULL,
@@ -23,6 +30,7 @@ CREATE TABLE dashboard_datasource (
   PRIMARY KEY (datasource_id)
 );
 
+DROP TABLE IF exists dashboard_widget;
 CREATE TABLE dashboard_widget (
   widget_id bigint(20) NOT NULL AUTO_INCREMENT,
   user_id varchar(100) NOT NULL,
@@ -32,6 +40,7 @@ CREATE TABLE dashboard_widget (
   PRIMARY KEY (widget_id)
 );
 
+DROP TABLE IF exists dashboard_dataset;
 CREATE TABLE dashboard_dataset (
   dataset_id bigint(20) NOT NULL AUTO_INCREMENT,
   user_id varchar(100) NOT NULL,
@@ -41,6 +50,7 @@ CREATE TABLE dashboard_dataset (
   PRIMARY KEY (dataset_id)
 );
 
+DROP TABLE IF exists dashboard_user;
 CREATE TABLE dashboard_user (
   user_id varchar(50) NOT NULL,
   login_name varchar(100) DEFAULT NULL,
@@ -53,6 +63,7 @@ CREATE TABLE dashboard_user (
 INSERT INTO dashboard_user (user_id,login_name,user_name,user_password)
 VALUES('1', 'admin', 'Administrator', 'ff9830c42660c1dd1942844f8069b74a');
 
+DROP TABLE IF exists dashboard_user_role;
 CREATE TABLE dashboard_user_role (
   user_role_id bigint(20) NOT NULL AUTO_INCREMENT,
   user_id varchar(100) DEFAULT NULL,
@@ -60,6 +71,7 @@ CREATE TABLE dashboard_user_role (
   PRIMARY KEY (user_role_id)
 );
 
+DROP TABLE IF exists dashboard_role;
 CREATE TABLE dashboard_role (
   role_id varchar(100) NOT NULL,
   role_name varchar(100) DEFAULT NULL,
@@ -67,6 +79,7 @@ CREATE TABLE dashboard_role (
   PRIMARY KEY (role_id)
 );
 
+DROP TABLE IF exists dashboard_role_res;
 CREATE TABLE dashboard_role_res (
   role_res_id bigint(20) NOT NULL AUTO_INCREMENT,
   role_id varchar(100) DEFAULT NULL,
@@ -76,6 +89,7 @@ CREATE TABLE dashboard_role_res (
   PRIMARY KEY (role_res_id)
 );
 
+DROP TABLE IF exists dashboard_job;
 CREATE TABLE dashboard_job (
   job_id bigint(20) NOT NULL AUTO_INCREMENT,
   job_name varchar(200) DEFAULT NULL,
@@ -91,6 +105,7 @@ CREATE TABLE dashboard_job (
   PRIMARY KEY (job_id)
 );
 
+DROP TABLE IF exists dashboard_board_param;
 CREATE TABLE dashboard_board_param (
   board_param_id bigint(20) NOT NULL AUTO_INCREMENT,
   user_id varchar(50) NOT NULL,
@@ -114,7 +129,7 @@ ALTER  TABLE  dashboard_board ADD update_time TIMESTAMP DEFAULT now();
 
 -- 0.5 Real folder
 -- Real folder
-DROP TABLE  dashboard_folder;
+DROP TABLE  IF EXISTS dashboard_folder;
 CREATE TABLE dashboard_folder (
   folder_id int PRIMARY KEY AUTO_INCREMENT,
   folder_name VARCHAR(50),
