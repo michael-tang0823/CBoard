@@ -42,8 +42,15 @@ public class ViewDashboardWidget {
         this.folderId = widget.getFolderId();
         this.userName = widget.getUserName();
         this.loginName = widget.getLoginName();
-        this.createTime = widget.getCreateTime().toString();
-        this.updateTime = widget.getUpdateTime().toString();
+
+        if (widget.getCreateTime() != null) {
+            this.createTime = widget.getCreateTime().toString();
+        }
+
+        if (widget.getUpdateTime() != null) {
+            this.updateTime = widget.getUpdateTime().toString();
+        }
+
         this.data = JSONObject.parseObject(widget.getData());
         this.edit = RolePermission.isEdit(widget.getPermission());
         this.delete = RolePermission.isDelete(widget.getPermission());

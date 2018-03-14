@@ -45,8 +45,14 @@ public class ViewDashboardBoard {
         this.name = board.getName();
         this.userName = board.getUserName();
         this.loginName = board.getLoginName();
-        this.createTime = board.getCreateTime().toString();
-        this.updateTime = board.getUpdateTime().toString();
+        if (board.getCreateTime() != null) {
+            this.createTime = board.getCreateTime().toString();
+        }
+        if (board.getUpdateTime() != null) {
+            this.updateTime = board.getUpdateTime().toString();
+        }
+
+
         this.layout = JSONObject.parseObject(board.getLayout());
         this.categoryName = board.getCategoryName();
         this.edit = RolePermission.isEdit(board.getPermission());

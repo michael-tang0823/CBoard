@@ -43,8 +43,13 @@ public class ViewDashboardDatasource {
         this.delete = RolePermission.isDelete(datasource.getPermission());
         this.userName = datasource.getUserName();
         this.loginName = datasource.getLoginName();
-        this.createTime = datasource.getCreateTime().toString();
-        this.updateTime = datasource.getUpdateTime().toString();
+        if (datasource.getCreateTime() != null) {
+            this.createTime = datasource.getCreateTime().toString();
+        }
+        if (datasource.getUpdateTime() != null) {
+            this.updateTime = datasource.getUpdateTime().toString();
+        }
+
     }
 
     public boolean isEdit() {
