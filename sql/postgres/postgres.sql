@@ -112,6 +112,14 @@ CREATE TABLE dashboard_widget (
   PRIMARY KEY (widget_id)
 );
 
+DROP TABLE IF EXISTS Meta_Version;
+CREATE TABLE Meta_Version (
+  id serial PRIMARY KEY,
+  name VARCHAR(50),
+  status int DEFAULT 0,
+  create_time TIMESTAMP DEFAULT now(),
+  update_time TIMESTAMP DEFAULT now()
+);
 
 
 --------
