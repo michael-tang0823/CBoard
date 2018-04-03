@@ -124,10 +124,13 @@ CREATE TABLE dashboard_folder (
   PRIMARY KEY (folder_id)
 );
 
---ALTER TABLE dashboard_folder AUTO_INCREMENT=10000;
+ALTER SEQUENCE dashboard_folder_folder_id_seq
+MINVALUE 10000
+START 10000
+RESTART 10000;
 
 -- Root Folder
-INSERT INTO dashboard_folder (folder_id,folder_name,parent_id) VALUES (10000, 'Root', -1);
+INSERT INTO dashboard_folder (folder_name,parent_id) VALUES ('Root', -1);
 -- Private Folder
 INSERT INTO dashboard_folder (folder_name, parent_id, is_private) VALUES ('.private', 10000, 1);
 -- Dashboard Category Folder
