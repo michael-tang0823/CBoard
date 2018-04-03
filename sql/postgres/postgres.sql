@@ -112,6 +112,28 @@ CREATE TABLE dashboard_widget (
   PRIMARY KEY (widget_id)
 );
 
+DROP TABLE  IF EXISTS dashboard_folder;
+CREATE TABLE dashboard_folder (
+  folder_id serial,
+  folder_name VARCHAR(50),
+  parent_id int DEFAULT -1,
+  is_private int DEFAULT 0,
+  user_id VARCHAR(50) DEFAULT '1',
+  create_time TIMESTAMP DEFAULT now(),
+  update_time TIMESTAMP DEFAULT now(),
+  PRIMARY KEY (folder_id)
+);
+
+--ALTER TABLE dashboard_folder AUTO_INCREMENT=10000;
+
+-- Root Folder
+INSERT INTO dashboard_folder (folder_id,folder_name,parent_id) VALUES (10000, 'Root', -1);
+-- Private Folder
+INSERT INTO dashboard_folder (folder_name, parent_id, is_private) VALUES ('.private', 10000, 1);
+-- Dashboard Category Folder
+INSERT INTO dashboard_folder (folder_name, parent_id) SELECT category_name, 10000 FROM dashboard_category;
+
+
 DROP TABLE IF EXISTS Meta_Version;
 CREATE TABLE Meta_Version (
   id serial PRIMARY KEY,

@@ -14,19 +14,19 @@
     </select>
 
     <select id="getFolder" resultType="org.cboard.pojo.DashboardFolder">
-        SELECT folder_id id,folder_name name,parent_id parentId,is_private isPrivate,user_id userId,create_time createTime,update_time updateTime
+        SELECT folder_id id,folder_name as name,parent_id parentId,is_private isPrivate,user_id userId,create_time createTime,update_time updateTime
         FROM dashboard_folder
         WHERE parent_id = #{0} AND folder_name = #{1}
     </select>
 
     <select id="getFolderById" resultType="org.cboard.pojo.DashboardFolder">
-        SELECT folder_id id,folder_name name,parent_id parentId,is_private isPrivate,user_id userId,create_time createTime,update_time updateTime
+        SELECT folder_id id,folder_name as name,parent_id parentId,is_private isPrivate,user_id userId,create_time createTime,update_time updateTime
         FROM dashboard_folder
         WHERE folder_id = #{0}
     </select>
 
     <select id="getFolderByUserId" resultType="org.cboard.pojo.DashboardFolder">
-        SELECT folder_id id,folder_name name,parent_id parentId,is_private isPrivate,user_id userId,create_time createTime,update_time updateTime
+        SELECT folder_id id,folder_name as name,parent_id parentId,is_private isPrivate,user_id userId,create_time createTime,update_time updateTime
         FROM dashboard_folder
         WHERE user_id = #{0} and is_private = 0 and folder_id != 10000
     </select>

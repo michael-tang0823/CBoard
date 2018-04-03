@@ -55,7 +55,7 @@
     </select>
 
     <select id="getDatasource" resultType="org.cboard.pojo.DashboardDatasource">
-        SELECT datasource_id id,user_id userId,source_name name,source_type type ,config,create_time createTime,update_time updateTime FROM dashboard_datasource WHERE datasource_id = #{0}
+        SELECT datasource_id id,user_id userId,source_name as name,source_type as type ,config,create_time createTime,update_time updateTime FROM dashboard_datasource WHERE datasource_id = #{0}
     </select>
 
     <insert id="save" parameterType="org.cboard.pojo.DashboardDatasource">
