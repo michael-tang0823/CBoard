@@ -493,9 +493,17 @@ public class DashboardController extends BaseController {
         Integer[] folders = JSONArray.parseArray(folderIds).toArray(new Integer[]{});
 
         //merg folderids and auth folderids and creator
-        for (int f : folders){
-            resIds.add(f);
+        if (folders != null) {
+            for (Integer f : folders){
+                if (f != null) {
+                    resIds.add(f);
+                } else {
+                    System.err.println(folders);
+                }
+
+            }
         }
+
         for (DashboardFolder fo : creator){
             resIds.add(fo.getId());
         }
