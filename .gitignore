@@ -97,3 +97,6 @@ hs_err_pid*
 *.log
 
 **/CElasticsearchDataProvider.java
+
+#mac
+.DS_Store
