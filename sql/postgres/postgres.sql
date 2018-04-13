@@ -1,14 +1,15 @@
 --
 
 CREATE TABLE dashboard_board (
-"board_id" serial NOT NULL,
-"user_id" varchar(50) COLLATE "default" NOT NULL,
-"category_id" int4,
-"board_name" varchar(100) COLLATE "default" NOT NULL,
-"layout_json" text COLLATE "default",
-"create_time" timestamp(6) DEFAULT now() NOT NULL,
-"update_time" timestamp(6) DEFAULT now() NOT NULL,
-CONSTRAINT "dashboard_board_pkey" PRIMARY KEY ("board_id")
+  "board_id" serial NOT NULL,
+  "user_id" varchar(50) NOT NULL,
+  "category_id" int,
+  "board_name" varchar(100) NOT NULL,
+  "layout_json" text,
+  "folder_id" int DEFAULT 10000,
+  "create_time" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "update_time" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY ("board_id")
 );
 
 
@@ -32,9 +33,10 @@ CREATE TABLE dashboard_category (
 CREATE TABLE dashboard_dataset (
   dataset_id serial,
   user_id varchar(100) NOT NULL,
-  category_name varchar(100) DEFAULT NULL,
-  dataset_name varchar(100) DEFAULT NULL,
+  category_name varchar(100),
+  dataset_name varchar(100),
   data_json text,
+  "folder_id" int DEFAULT 10000,
   create_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   update_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (dataset_id)
@@ -54,15 +56,15 @@ CREATE TABLE dashboard_datasource (
 
 CREATE TABLE dashboard_job (
   job_id serial,
-  job_name varchar(200) DEFAULT NULL,
-  cron_exp varchar(200) DEFAULT NULL,
-  start_date timestamp NULL DEFAULT NULL,
-  end_date timestamp NULL DEFAULT NULL,
-  job_type varchar(200) DEFAULT NULL,
+  job_name varchar(200),
+  cron_exp varchar(200),
+  start_date timestamp,
+  end_date timestamp,
+  job_type varchar(200),
   job_config text,
-  user_id varchar(100) DEFAULT NULL,
-  last_exec_time timestamp NULL DEFAULT NULL,
-  job_status int DEFAULT NULL,
+  user_id varchar(100),
+  last_exec_time timestamp,
+  job_status int,
   exec_log text,
   PRIMARY KEY (job_id)
 );
@@ -70,43 +72,44 @@ CREATE TABLE dashboard_job (
 
 CREATE TABLE dashboard_role (
   role_id varchar(100) NOT NULL,
-  role_name varchar(100) DEFAULT NULL,
-  user_id varchar(50) DEFAULT NULL,
+  role_name varchar(100),
+  user_id varchar(50),
   PRIMARY KEY (role_id)
 );
 
 CREATE TABLE dashboard_role_res (
   role_res_id serial,
-  role_id varchar(100) DEFAULT NULL,
-  res_type varchar(100) DEFAULT NULL,
-  res_id int DEFAULT NULL,
-  permission varchar(20) DEFAULT NULL,
+  role_id varchar(100),
+  res_type varchar(100),
+  res_id int,
+  permission varchar(20),
   PRIMARY KEY (role_res_id)
 );
 
 
 CREATE TABLE dashboard_user (
   user_id varchar(50) NOT NULL,
-  login_name varchar(100) DEFAULT NULL,
-  user_name varchar(100) DEFAULT NULL,
-  user_password varchar(100) DEFAULT NULL,
-  user_status varchar(100) DEFAULT NULL,
+  login_name varchar(100),
+  user_name varchar(100),
+  user_password varchar(100),
+  user_status varchar(100),
   PRIMARY KEY (user_id)
 );
 
 CREATE TABLE dashboard_user_role (
   user_role_id serial,
-  user_id varchar(100) DEFAULT NULL,
-  role_id varchar(100) DEFAULT NULL,
+  user_id varchar(100),
+  role_id varchar(100),
   PRIMARY KEY (user_role_id)
 );
 
 CREATE TABLE dashboard_widget (
   widget_id serial,
   user_id varchar(100) NOT NULL,
-  category_name varchar(100) DEFAULT NULL,
-  widget_name varchar(100) DEFAULT NULL,
+  category_name varchar(100),
+  widget_name varchar(100),
   data_json text,
+  "folder_id" int DEFAULT 10000,
   create_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   update_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (widget_id)
@@ -119,8 +122,8 @@ CREATE TABLE dashboard_folder (
   parent_id int DEFAULT -1,
   is_private int DEFAULT 0,
   user_id VARCHAR(50) DEFAULT '1',
-  create_time TIMESTAMP DEFAULT now(),
-  update_time TIMESTAMP DEFAULT now(),
+  create_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  update_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (folder_id)
 );
 
@@ -142,8 +145,8 @@ CREATE TABLE Meta_Version (
   id serial PRIMARY KEY,
   name VARCHAR(50),
   status int DEFAULT 0,
-  create_time TIMESTAMP DEFAULT now(),
-  update_time TIMESTAMP DEFAULT now()
+  create_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  update_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 
