@@ -255,4 +255,7 @@ public abstract class DataProvider {
         return configComponent;
     }
 
+    public void setAuthenticationService(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
+    }
 }
