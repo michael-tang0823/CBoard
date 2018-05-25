@@ -74,24 +74,28 @@ public class PlaceholderInSqlJdbcDataProviderTest {
         provider.afterPropertiesSet();
 
         DimensionConfig rowDimConfig = new DimensionConfig();
+        rowDimConfig.setColumnName("login_name");
+        rowDimConfig.setFilterType("eq");
+        rowDimConfig.setValues(Collections.emptyList());
+
         List<DimensionConfig> rows = new ArrayList<>();
         rows.add(rowDimConfig);
 
-        DimensionConfig colDimConfig = new DimensionConfig();
-        List<DimensionConfig> cols = new ArrayList<>();
-        rows.add(colDimConfig);
+//        DimensionConfig colDimConfig = new DimensionConfig();
+//        List<DimensionConfig> cols = new ArrayList<>();
+//        rows.add(colDimConfig);
 
         ValueConfig valueConfig = new ValueConfig();
-        valueConfig.setAggType("");
-        valueConfig.setColumn("1");
+        valueConfig.setAggType("count");
+        valueConfig.setColumn("login_name");
         List<ValueConfig> values = new ArrayList<>();
         values.add(valueConfig);
 
         AggConfig aggConfig = new AggConfig();
-        aggConfig.setRows(rows);
-        aggConfig.setColumns(cols);
-        aggConfig.setValues(values);
+        aggConfig.setColumns(Collections.emptyList());
         aggConfig.setFilters(Collections.emptyList());
+        aggConfig.setRows(rows);
+        aggConfig.setValues(values);
 
 
         provider.queryAggData(aggConfig);
