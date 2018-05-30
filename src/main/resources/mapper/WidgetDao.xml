@@ -64,7 +64,7 @@
     </select>
 
     <select id="getWidget" resultType="org.cboard.pojo.DashboardWidget">
-       SELECT widget_id id,user_id userId,widget_name name,data_json data,category_name categoryName,create_time createTime,update_time updateTime
+       SELECT widget_id AS id,user_id AS userId,widget_name AS name,data_json AS data,category_name AS categoryName,create_time AS createTime,update_time AS updateTime
          FROM dashboard_widget
         WHERE widget_id = #{0}
     </select>
