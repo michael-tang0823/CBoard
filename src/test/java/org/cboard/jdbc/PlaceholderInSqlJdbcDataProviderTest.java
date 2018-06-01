@@ -28,8 +28,10 @@ public class PlaceholderInSqlJdbcDataProviderTest {
         datasource.put("username", "postgres");
         datasource.put("password", "root");
 
+        User user = new User("test", "test", Collections.emptyList());
+        user.setUserId("1");
         AuthenticationService authService = mock(AuthenticationService.class);
-        when(authService.getCurrentUser()).thenReturn(new User("test", "test", Collections.emptyList()));
+        when(authService.getCurrentUser()).thenReturn(user);
 
         provider = new PlaceholderInSqlJdbcDataProvider();
         provider.setDataSource(datasource);
@@ -58,6 +60,17 @@ public class PlaceholderInSqlJdbcDataProviderTest {
         String[] columns = provider.getColumn();
 
         assertTrue(columns.length > 0);
+    }
+
+    @Test
+    public void getColumn_sql_with_user_id() throws Exception {
+        Map<String, String> query = new HashMap();
+        query.put("sql", "select * from dashboard_user where user_id = '#USER_ID'");
+        provider.setQuery(query);
+        String[] columns = provider.getColumn();
+
+        assertTrue(columns.length > 0);
+
     }
 
     @Test

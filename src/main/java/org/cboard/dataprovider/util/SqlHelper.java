@@ -2,6 +2,12 @@ package org.cboard.dataprovider.util;
 
 import org.apache.commons.lang.StringUtils;
 import org.cboard.dataprovider.config.*;
+import org.cboard.dto.User;
+import org.cboard.jdbc.PlaceholderInSqlUtils;
+import org.cboard.services.AuthenticationService;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 import java.util.StringJoiner;
 import java.util.function.Function;
@@ -16,11 +22,13 @@ import static org.cboard.dataprovider.DataProvider.separateNull;
 /**
  * Created by zyong on 2017/9/15.
  */
-public class SqlHelper {
+public class SqlHelper implements ApplicationContextAware {
 
     private String tableName;
     private boolean isSubquery;
     private SqlSyntaxHelper sqlSyntaxHelper = new SqlSyntaxHelper();
+
+    private ApplicationContext applicationContext;
 
     public SqlHelper() {}
 
@@ -71,6 +79,15 @@ public class SqlHelper {
         } else {
             fsql = "\nSELECT %s \n FROM %s \n %s \n %s";
         }
+
+        if (applicationContext != null) {
+            AuthenticationService authenticationService = applicationContext.getBean(AuthenticationService.class);
+            User user = authenticationService.getCurrentUser();
+
+            PlaceholderInSqlUtils sqlUtils = new PlaceholderInSqlUtils(tableName, user);
+            tableName = sqlUtils.parse(config.getFilters());
+        }
+
         String exec = String.format(fsql, selectColsStr, tableName, whereStr, groupByStr);
         return exec;
     }
@@ -209,5 +226,10 @@ public class SqlHelper {
 
     public SqlSyntaxHelper getSqlSyntaxHelper() {
         return this.sqlSyntaxHelper;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 }

@@ -20,6 +20,7 @@ import org.cboard.dataprovider.config.AggConfig;
 import org.cboard.dataprovider.result.AggregateResult;
 import org.cboard.dataprovider.util.DPCommonUtils;
 import org.cboard.dataprovider.util.SqlHelper;
+import org.cboard.dto.User;
 import org.cboard.exception.CBoardException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -173,6 +174,9 @@ public class PlaceholderInSqlJdbcDataProvider extends DataProvider implements Ag
      * @return
      */
     private String getAsSubQuery(String rawQueryText) {
+
+        rawQueryText = replacePlaceholder(rawQueryText);
+
         String deletedBlankLine = rawQueryText.replaceAll("(?m)^[\\s\t]*\r?\n", "").trim();
         return deletedBlankLine.endsWith(";") ? deletedBlankLine.substring(0, deletedBlankLine.length() - 1) : deletedBlankLine;
     }
@@ -257,6 +261,7 @@ public class PlaceholderInSqlJdbcDataProvider extends DataProvider implements Ag
         ResultSetMetaData metaData;
         try {
             stat.setMaxRows(100);
+            subQuerySql = replacePlaceholder(subQuerySql);
             String fsql = "\nSELECT * FROM (\n%s\n) cb_view WHERE 1=0";
             String sql = String.format(fsql, subQuerySql);
             LOG.info(sql);
@@ -350,6 +355,8 @@ public class PlaceholderInSqlJdbcDataProvider extends DataProvider implements Ag
             subQuery = getAsSubQuery(query.get(SQL));
         }
         SqlHelper sqlHelper = new SqlHelper(subQuery, true);
+        sqlHelper.setApplicationContext(appContext);
+
         if (!isUsedForTest()) {
             Map<String, Integer> columnTypes = null;
             try {
@@ -362,6 +369,22 @@ public class PlaceholderInSqlJdbcDataProvider extends DataProvider implements Ag
             sqlHelper.getSqlSyntaxHelper().setColumnTypes(columnTypes);
         }
         this.sqlHelper = sqlHelper;
+    }
+
+    /**
+     * replace placeholder in sql like #tenant_uid, #from_request_date, #to_request_date
+     * @param rawQuery
+     * @return
+     */
+    private String replacePlaceholder(String rawQuery) {
+        if (rawQuery == null) return null;
+
+        User user = authenticationService.getCurrentUser();
+
+        PlaceholderInSqlUtils sqlUtils = new PlaceholderInSqlUtils(rawQuery, user);
+
+        return sqlUtils.parse();
+
     }
 
 }

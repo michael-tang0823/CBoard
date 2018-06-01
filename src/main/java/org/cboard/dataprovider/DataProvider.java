@@ -19,6 +19,7 @@ import org.cboard.util.NaturalOrderComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -31,9 +32,14 @@ import java.util.stream.Stream;
 public abstract class DataProvider {
 
     @Autowired
-    private AuthenticationService authenticationService;
+    protected AuthenticationService authenticationService;
+
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    protected ApplicationContext appContext;
+
     private InnerAggregator innerAggregator;
     protected Map<String, String> dataSource;
     protected Map<String, String> query;
