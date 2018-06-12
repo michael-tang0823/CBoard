@@ -18,7 +18,7 @@ public class JWTTokenProvider {
         try {
             Algorithm algorithm = Algorithm.HMAC256("secret");
             String token = JWT.create()
-                    .withIssuer("APM")
+                    .withIssuer("CBoard")
                     .withSubject(userName)
                     .sign(algorithm);
 
@@ -33,7 +33,7 @@ public class JWTTokenProvider {
 
         Algorithm algorithm = Algorithm.HMAC256("secret");
         JWTVerifier verifier = JWT.require(algorithm)
-                .withIssuer("APM")
+                .withIssuer("CBoard")
                 .build(); //Reusable verifier instance
         DecodedJWT jwt = verifier.verify(token);
         return jwt.getSubject();
