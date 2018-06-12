@@ -20,6 +20,7 @@
         <security:logout logout-url="/j_spring_cas_security_logout"/>
         <security:remember-me remember-me-parameter="remember_me"/>
         <security:csrf disabled="true"/>
+        <security:custom-filter ref="jwtAuthenticationFilter" before="BASIC_AUTH_FILTER" />
     </security:http>
 
     <security:authentication-manager alias="authenticationManager">
@@ -66,5 +67,7 @@
 
     <bean id="dbAuthenticationService"
           class="org.cboard.security.service.DefaultAuthenticationService"/>
+
+    <bean id="jwtAuthenticationFilter" class="org.cboard.security.token.JWTAuthenticationFilter" />
 
 </beans>
