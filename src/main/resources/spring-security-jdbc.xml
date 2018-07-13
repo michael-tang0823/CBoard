@@ -6,7 +6,7 @@
     http://www.springframework.org/schema/security
     http://www.springframework.org/schema/security/spring-security-4.2.xsd">
 
-    <security:http auto-config="true">
+    <security:http auto-config="false">
         <security:intercept-url pattern="/lib/**" access="permitAll"/>
         <security:intercept-url pattern="/dist/**" access="permitAll"/>
         <security:intercept-url pattern="/bootstrap/**" access="permitAll"/>
@@ -20,6 +20,7 @@
         <security:logout logout-url="/j_spring_cas_security_logout"/>
         <security:remember-me remember-me-parameter="remember_me"/>
         <security:csrf disabled="true"/>
+        <security:custom-filter ref="customBasicAuthenticationFilter" position="BASIC_AUTH_FILTER" />
         <security:custom-filter ref="jwtAuthenticationFilter" before="BASIC_AUTH_FILTER" />
     </security:http>
 
@@ -68,6 +69,9 @@
     <bean id="dbAuthenticationService"
           class="org.cboard.security.service.DefaultAuthenticationService"/>
 
-    <bean id="jwtAuthenticationFilter" class="org.cboard.security.token.JWTAuthenticationFilter" />
+    <bean id="jwtAuthenticationFilter" class="org.cboard.security.token.TokenAuthenticationFilter" />
+    <bean id="customBasicAuthenticationFilter" class="org.cboard.security.token.CustomBasicAuthenticationFilter" >
+        <constructor-arg ref="authenticationManager"/>
+    </bean>
 
 </beans>

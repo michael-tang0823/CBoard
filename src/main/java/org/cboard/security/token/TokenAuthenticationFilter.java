@@ -16,11 +16,12 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Optional;
 
-public class JWTAuthenticationFilter extends GenericFilterBean {
-    private static final Logger logger = LoggerFactory.getLogger(JWTAuthenticationFilter.class);
+public class TokenAuthenticationFilter extends GenericFilterBean {
+    private static final Logger logger = LoggerFactory.getLogger(TokenAuthenticationFilter.class);
 
-    public static final String SPRING_SECURITY_URL_TOKEN_KEY = "token";
+    private static final String BEARER = "Bearer ";
 
     @Autowired
     JdbcDaoImpl userDetailsService;
@@ -30,8 +31,12 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
             throws IOException, ServletException {
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
-        String token = httpRequest.getParameter(SPRING_SECURITY_URL_TOKEN_KEY);
-        if (StringUtils.isEmpty(token)) {
+        //get token from header
+        Optional<String> authToken = Optional.ofNullable(httpRequest.getHeader("Authorization"))
+                .filter(s -> s.length() > BEARER.length() && s.startsWith(BEARER))
+                .map(s -> s.substring(BEARER.length(), s.length()));
+
+        if (!authToken.isPresent()) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -39,7 +44,7 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
         String loginName = null;
         try {
             JWTTokenProvider tokenProvider = new JWTTokenProvider();
-            loginName = tokenProvider.verify(token);
+            loginName = tokenProvider.verify(authToken.get());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
