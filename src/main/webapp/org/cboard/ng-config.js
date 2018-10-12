@@ -102,6 +102,27 @@ angular.module('cBoard').config(['$stateProvider', function ($stateProvider) {
 
 angular.module('cBoard').factory('sessionHelper', ["$rootScope", "$q", function ($rootScope, $q) {
     var sessionHelper = {
+        request: function(config) {
+            if ($rootScope.token) {
+                config.headers['Authentication'] = "Bearer " + $rootScope.token;
+            }
+
+            return config;
+        },
+
+        requestError: function(error) {
+            console.log(error);
+            $q.reject(error);
+        },
+
+        response: function(response) {
+            var token = response.headers('Token');
+            if (token) {
+                $rootScope.token = token;
+            }
+            return response;
+        },
+
         responseError: function (response) {
             if (response.data.status == 2) {
                 if ($rootScope.alert) {

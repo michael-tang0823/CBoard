@@ -6,7 +6,15 @@
     http://www.springframework.org/schema/security
     http://www.springframework.org/schema/security/spring-security-4.2.xsd">
 
-    <security:http auto-config="false">
+    <security:http auto-config="false" create-session="stateless" entry-point-ref="customAuthenticationEntryPoint">
+        <security:intercept-url pattern="/starter.html" access="!anonymous"/>
+        <security:intercept-url pattern="/**/*.html" access="permitAll"/>
+        <security:intercept-url pattern="/**/*.js" access="permitAll"/>
+        <security:intercept-url pattern="/bundle/*.css" access="permitAll"/>
+        <security:intercept-url pattern="/i18n/**" access="permitAll"/>
+        <security:intercept-url pattern="/favicon.ico" access="permitAll"/>
+        <security:intercept-url pattern="/fonts/**" access="permitAll"/>
+
         <security:intercept-url pattern="/lib/**" access="permitAll"/>
         <security:intercept-url pattern="/dist/**" access="permitAll"/>
         <security:intercept-url pattern="/bootstrap/**" access="permitAll"/>
@@ -15,17 +23,19 @@
         <security:intercept-url pattern="/login**" access="permitAll"/>
         <security:intercept-url pattern="/css/**" access="permitAll"/>
         <security:intercept-url pattern="/**" access="!anonymous"/>
-        <security:form-login login-page="/login.do" username-parameter="username" password-parameter="password"
-                             default-target-url="/starter.html" always-use-default-target="true"/>
-        <security:logout logout-url="/j_spring_cas_security_logout"/>
+        <!--<security:form-login login-page="/login.do" username-parameter="username" password-parameter="password"-->
+                             <!--default-target-url="/starter.html" always-use-default-target="true"/>-->
+        <!--<security:logout logout-url="/j_spring_cas_security_logout"/>-->
         <security:remember-me remember-me-parameter="remember_me"/>
         <security:csrf disabled="true"/>
         <security:custom-filter ref="customBasicAuthenticationFilter" position="BASIC_AUTH_FILTER" />
-        <security:custom-filter ref="jwtAuthenticationFilter" before="BASIC_AUTH_FILTER" />
+        <security:custom-filter ref="tokenAuthenticationFilter" after="BASIC_AUTH_FILTER" />
+        <security:custom-filter ref="customUsernamePasswordAuthenticationFilter" before="BASIC_AUTH_FILTER" />
     </security:http>
 
     <security:authentication-manager alias="authenticationManager">
         <security:authentication-provider ref="shareAuthenticationProviderDecorator"/>
+        <security:authentication-provider ref="tokenAuthenticationProvider"/>
     </security:authentication-manager>
 
     <bean id="shareAuthenticationProviderDecorator" class="org.cboard.security.service.ShareAuthenticationProviderDecorator">
@@ -39,6 +49,13 @@
         </property>
         <property name="passwordEncoder">
             <ref bean="passwordEncoder"/>
+        </property>
+    </bean>
+
+    <bean id="tokenAuthenticationProvider"
+          class="org.cboard.security.token.TokenAuthenticationProvider">
+        <property name="userDetailsService">
+            <ref bean="userDetailsService"/>
         </property>
     </bean>
 
@@ -69,9 +86,27 @@
     <bean id="dbAuthenticationService"
           class="org.cboard.security.service.DefaultAuthenticationService"/>
 
-    <bean id="jwtAuthenticationFilter" class="org.cboard.security.token.TokenAuthenticationFilter" />
+    <bean id="tokenAuthenticationFilter" class="org.cboard.security.token.TokenAuthenticationFilter" >
+        <property name="authenticationManager" ref="authenticationManager" />
+    </bean>
     <bean id="customBasicAuthenticationFilter" class="org.cboard.security.token.CustomBasicAuthenticationFilter" >
         <constructor-arg ref="authenticationManager"/>
+    </bean>
+
+    <bean id="customUsernamePasswordAuthenticationFilter" class="org.cboard.security.token.CustomUsernamePasswordAuthenticationFilter" >
+        <property name="authenticationManager" ref="authenticationManager" />
+        <property name="authenticationSuccessHandler" ref="forwardAuthenticationSuccessHandler"/>
+    </bean>
+
+    <bean id="customAuthenticationEntryPoint" class="org.cboard.security.token.CustomAuthenticationEntryPoint" />
+
+    <bean id="simpleUrlAuthenticationSuccessHandler" class="org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler">
+        <property name="defaultTargetUrl" value="/starter.html" />
+        <property name="alwaysUseDefaultTargetUrl" value="true" />
+    </bean>
+
+    <bean id="forwardAuthenticationSuccessHandler" class="org.springframework.security.web.authentication.ForwardAuthenticationSuccessHandler" >
+        <constructor-arg value="/starter.html" />
     </bean>
 
 </beans>

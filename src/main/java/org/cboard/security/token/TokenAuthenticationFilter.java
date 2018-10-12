@@ -1,66 +1,52 @@
 package org.cboard.security.token;
 
-import org.cboard.dto.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.jdbc.JdbcDaoImpl;
-import org.springframework.util.StringUtils;
-import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
-public class TokenAuthenticationFilter extends GenericFilterBean {
+public class TokenAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
     private static final Logger logger = LoggerFactory.getLogger(TokenAuthenticationFilter.class);
 
+    private static final String SPRING_SECURITY_URL_TOKEN_KEY = "Token";
     private static final String BEARER = "Bearer ";
 
-    @Autowired
-    JdbcDaoImpl userDetailsService;
+    public TokenAuthenticationFilter() {
+        super(new OrRequestMatcher(new AntPathRequestMatcher("/commons/**"), new AntPathRequestMatcher("/dashboard/**"), new AntPathRequestMatcher("/admin/**")));
+    }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
-            throws IOException, ServletException {
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        //get token from header
-        Optional<String> authToken = Optional.ofNullable(httpRequest.getHeader("Authorization"))
+        //get token from header first, if not found then from url
+        Optional<String> authToken = Optional.ofNullable(request.getHeader("Authorization"))
                 .filter(s -> s.length() > BEARER.length() && s.startsWith(BEARER))
                 .map(s -> s.substring(BEARER.length(), s.length()));
 
         if (!authToken.isPresent()) {
-            filterChain.doFilter(request, response);
-            return;
+            authToken = Optional.ofNullable(request.getHeader(SPRING_SECURITY_URL_TOKEN_KEY));
         }
 
-        String loginName = null;
-        try {
-            JWTTokenProvider tokenProvider = new JWTTokenProvider();
-            loginName = tokenProvider.verify(authToken.get());
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+        if (!authToken.isPresent()) {
+            authToken = Optional.ofNullable(request.getParameter(SPRING_SECURITY_URL_TOKEN_KEY));
         }
 
-        if (StringUtils.isEmpty(loginName)) {
-            filterChain.doFilter(request, response);
-            return;
+        if (!authToken.isPresent()) {
+            throw new BadCredentialsException("Missing Authentication Token");
         }
 
-        //load the user info and its authorities
-        User user = (User)userDetailsService.loadUserByUsername(loginName);
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        filterChain.doFilter(request, response);
-
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(null, authToken.get());
+        return getAuthenticationManager().authenticate(authentication);
 
     }
 }
