@@ -3,8 +3,16 @@
  */
 
 
-angular.module('cBoard').config(['$stateProvider', function ($stateProvider) {
+angular.module('cBoard').config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
+
+    $urlRouterProvider.otherwise("/login");
+
     $stateProvider
+        .state('login', {
+            url: '/login',
+            templateUrl: 'org/cboard/view/login/login.html',
+            controller: 'loginCtrl'
+        })
         .state('home', {
             url: '',
             templateUrl: 'org/cboard/view/cboard/homepage.html',
