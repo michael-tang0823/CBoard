@@ -448,6 +448,17 @@ public class DashboardController extends BaseController {
         return tempFile.split(imgPath)[1];
     }
 
+    @RequestMapping(value = "/downloadExcel")
+    public ResponseEntity<byte[]> downloadExcel() {
+        ResponseEntity responseEntity = ResponseEntity
+                .ok()
+                .contentType(MediaType.TEXT_PLAIN)
+                .header("Content-Disposition","attachment; filename=test.csv")
+                .body(new byte[]{'a'});
+
+        return responseEntity;
+    }
+
     private String imgPath(HttpServletRequest request) {
         String templateDir = request.getSession().getServletContext().getRealPath("/");
         templateDir = templateDir.replace("\\","/");
